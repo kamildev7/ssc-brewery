@@ -1,8 +1,11 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.RestHeaderAuthFilter;
+import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,28 +20,34 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()),
+                        UsernamePasswordAuthenticationFilter.class)
+                .csrf()
+                .disable();
+
+
         http
                 .authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**")
-                            .permitAll()
-                            .antMatchers("/beers/find", "/beers*")
-                            .permitAll()
-                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**")
-                            .permitAll()
-                            .antMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}")
-                            .permitAll();
+                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
+                            .antMatchers("/beers/find", "/beers*").permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest()
@@ -48,6 +57,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic();
 
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override
@@ -61,7 +75,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .password("{sha256}03159164b78c1abefa0055f03ba9939a03918861b292d079f7138c925d2b164b72f9397944fa61ac")
                 .roles("USER");
 
-        auth.inMemoryAuthentication().withUser("scott").password("{ldap}{SSHA}dcf0XySfHZ4SWWG37KiIpFORePPGbfCBqIPJ/Q==").roles("CUSTOMER");
+        auth.inMemoryAuthentication()
+                .withUser("scott")
+                .password("{bcrypt10}$2a$10$VWlfo97V/yIIEm1owaugLemJJrhYkuDaq7hmE2jclPY6ndssV8CKO")
+                .roles("CUSTOMER");
     }
 
     //    @Override
