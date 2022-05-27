@@ -1,7 +1,9 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.JpaUserDetailsService;
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -76,22 +78,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("spring")
-                .password("{bcrypt}$2a$10$gyfsspV5EXUDsP/.gUzT2.cnCIhlrqKTBzwPvcmOyRq/hq7BWv.Ha")
-                .roles("ADMIN")
-                .and()
-                .withUser("user")
-                .password("{sha256}03159164b78c1abefa0055f03ba9939a03918861b292d079f7138c925d2b164b72f9397944fa61ac")
-                .roles("USER");
+//    @Autowired
+//    JpaUserDetailsService jpaUserDetailsService;
 
-        auth.inMemoryAuthentication()
-                .withUser("scott")
-                .password("{bcrypt10}$2a$10$VWlfo97V/yIIEm1owaugLemJJrhYkuDaq7hmE2jclPY6ndssV8CKO")
-                .roles("CUSTOMER");
-    }
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(this.jpaUserDetailsService).passwordEncoder(passwordEncoder());
+
+//        auth.inMemoryAuthentication()
+//                .withUser("spring")
+//                .password("{bcrypt}$2a$10$gyfsspV5EXUDsP/.gUzT2.cnCIhlrqKTBzwPvcmOyRq/hq7BWv.Ha")
+//                .roles("ADMIN")
+//                .and()
+//                .withUser("user")
+//                .password("{sha256}03159164b78c1abefa0055f03ba9939a03918861b292d079f7138c925d2b164b72f9397944fa61ac")
+//                .roles("USER");
+//
+//        auth.inMemoryAuthentication()
+//                .withUser("scott")
+//                .password("{bcrypt10}$2a$10$VWlfo97V/yIIEm1owaugLemJJrhYkuDaq7hmE2jclPY6ndssV8CKO")
+//                .roles("CUSTOMER");
+//    }
 
     //    @Override
 //    @Bean
