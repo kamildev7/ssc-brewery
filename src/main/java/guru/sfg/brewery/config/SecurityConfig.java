@@ -44,10 +44,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
-                            .antMatchers("/beers/find", "/beers*").permitAll()
-                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                            .antMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
+                    authorize
+                            .antMatchers("/h2-console/**")
+                            .permitAll() //do not use in produtction
+                            .antMatchers("/", "/webjars/**", "/login", "/resources/**")
+                            .permitAll()
+                            .antMatchers("/beers/find", "/beers*")
+                            .permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**")
+                            .permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}")
+                            .permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest()
@@ -56,6 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .and()
                 .httpBasic();
+
+        //h2 console config
+        http.headers()
+                .frameOptions()
+                .sameOrigin();
 
     }
 
