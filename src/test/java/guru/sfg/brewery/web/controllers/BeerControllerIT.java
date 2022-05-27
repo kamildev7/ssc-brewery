@@ -8,9 +8,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Created by jt on 6/12/20.
- */
 @SpringBootTest
 public class BeerControllerIT extends BaseIT{
 
