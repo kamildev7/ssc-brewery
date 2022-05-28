@@ -5,8 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Set;
 
-@Getter
+/**
+ * Created by jt on 6/21/20.
+ */
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -17,8 +20,8 @@ public class Authority {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private String role;
+    private String permission;
 
     @ManyToMany(mappedBy = "authorities")
-    private Set<User> users;
+    private Set<Role> roles;
 }

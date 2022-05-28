@@ -7,6 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Created by jt on 6/17/20.
+ */
 public class SfgPasswordEncoderFactories {
 
     public static PasswordEncoder createDelegatingPasswordEncoder() {

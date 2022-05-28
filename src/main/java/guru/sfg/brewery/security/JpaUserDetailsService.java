@@ -12,13 +12,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Created by jt on 6/22/20.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -32,8 +34,9 @@ public class JpaUserDetailsService implements UserDetailsService {
 
         log.debug("Getting User info via JPA");
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User name: " + username + " not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+            return new UsernameNotFoundException("User name: " + username + " not found");
+        });
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 user.getEnabled(), user.getAccountNonExpired(), user.getCredentialsNonExpired(),
@@ -41,13 +44,13 @@ public class JpaUserDetailsService implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> convertToSpringAuthorities(Set<Authority> authorities) {
-        if (!CollectionUtils.isEmpty(authorities)) {
+        if (authorities != null && authorities.size() > 0){
             return authorities.stream()
-                    .map(Authority::getRole)
+                    .map(Authority::getPermission)
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toSet());
         } else {
-            return Collections.emptySet();
+            return new HashSet<>();
         }
     }
 }
