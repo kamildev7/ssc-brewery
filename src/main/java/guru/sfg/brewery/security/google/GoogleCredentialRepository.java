@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Created by jt on 7/23/20.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -19,14 +22,15 @@ public class GoogleCredentialRepository implements ICredentialRepository {
     @Override
     public String getSecretKey(String userName) {
         User user = userRepository.findByUsername(userName).orElseThrow();
-        return user.getGoogle2faSecret();
+
+        return user.getGoogle2FaSecret();
     }
 
     @Override
     public void saveUserCredentials(String userName, String secretKey, int validationCode, List<Integer> scratchCodes) {
         User user = userRepository.findByUsername(userName).orElseThrow();
-        user.setGoogle2faSecret(secretKey);
-        user.setUseGoogle2fa(true);
+        user.setGoogle2FaSecret(secretKey);
+        user.setUseGoogle2f(true);
         userRepository.save(user);
     }
 }
