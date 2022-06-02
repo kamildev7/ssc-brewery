@@ -37,7 +37,7 @@ public class UserController {
         return "user/register2fa";
     }
 
-    @PostMapping
+    @PostMapping("/register2fa")
     public String confirm2fa(@RequestParam Integer verifyCode) {
 
         User user = getUser();
@@ -60,7 +60,7 @@ public class UserController {
         return "user/verify2fa";
     }
 
-    @PostMapping
+    @PostMapping("/verify2fa")
     public String verifyPostOf2Fa(@RequestParam Integer verifyCode) {
 
         User user = getUser();
